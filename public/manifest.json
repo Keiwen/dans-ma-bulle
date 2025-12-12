@@ -1,0 +1,22 @@
+{
+  "name": "DansMaBulle",
+  "short_name": "DansMaBulle",
+  "description": "Comic books local reader",
+  "start_url": "/dans-ma-bulle/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFDF4",
+  "theme_color": "#0C487B",
+  "icons": [
+    {
+      "src": "/dans-ma-bulle/img/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/dans-ma-bulle/img/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

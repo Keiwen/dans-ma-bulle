@@ -1,0 +1,48 @@
+
+button,.btn {
+  display: inline-block;
+  background-color: transparent;
+  color: var(--light);
+  border: 1px solid var(--light);
+  border-radius: var(--border-radius);
+  padding: .25rem 1rem;
+  line-height: 2;
+  font-size: var(--font-size-default);
+  text-align: center;
+  text-decoration: none;
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  user-select: none;
+  margin: 5px;
+  cursor: pointer;
+  @include backgroundTransition(var(--light), var(--main-bg));
+  &.btn-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+    @include backgroundTransition(var(--primary), var(--main-bg));
+  }
+  &.btn-secondary {
+    color: var(--secondary);
+    border-color: var(--secondary);
+    @include backgroundTransition(var(--secondary), var(--main-bg));
+  }
+  &.btn-success {
+    color: var(--success);
+    border-color: var(--success);
+    @include backgroundTransition(var(--success), var(--main-bg));
+  }
+  &.btn-info {
+    color: var(--info);
+    border-color: var(--info);
+    @include backgroundTransition(var(--info), var(--main-bg));
+  }
+  &.btn-warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    @include backgroundTransition(var(--warning), var(--main-bg));
+  }
+  &.btn-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+    @include backgroundTransition(var(--danger), var(--main-bg));
+  }
+}

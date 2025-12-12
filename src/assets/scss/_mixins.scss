@@ -1,0 +1,82 @@
+/* ** MIXINS ** */
+
+//transitions
+@mixin transition($transition) {
+  -webkit-transition: $transition;
+  -moz-transition: $transition;
+  -ms-transition: $transition;
+  -o-transition: $transition;
+  transition: $transition;
+}
+
+// double transition: setting transition1 then transition2 may not result in the same behavior than setting both
+@mixin doubleTransition($transition1, $transition2) {
+  -webkit-transition: $transition1, $transition2;
+  -moz-transition: $transition1, $transition2;
+  -ms-transition: $transition1, $transition2;
+  -o-transition: $transition1, $transition2;
+  transition: $transition1, $transition2;
+}
+
+//transform
+@mixin transform($transforms) {
+  -moz-transform: $transforms;
+  -o-transform: $transforms;
+  -ms-transform: $transforms;
+  -webkit-transform: $transforms;
+  transform: $transforms;
+}
+
+@mixin animation($name, $duration, $timingFunction, $iterationCount) {
+  -webkit-animation-name: $name;
+  animation-name: $name;
+  -webkit-animation-duration: $duration;
+  animation-duration: $duration;
+  -webkit-animation-timing-function: $timingFunction;
+  animation-timing-function: $timingFunction;
+  -webkit-animation-iteration-count: $iterationCount;
+  animation-iteration-count: $iterationCount;
+}
+
+@mixin keyframes($name) {
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @-o-keyframes #{$name} {
+    @content;
+  }
+  @-webkit-keyframes #{$name} {
+    @content
+  }
+  @keyframes #{$name} {
+    @content
+  }
+}
+
+//radial gradient
+@mixin radialGradient($centerColor, $borderColor) {
+  background: -moz-radial-gradient(center, ellipse cover, $centerColor 0%, $borderColor 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, $centerColor 0%, $borderColor 100%);
+  background: radial-gradient(ellipse at center, $centerColor 0%, $borderColor 100%);
+}
+
+//background transition
+@mixin backgroundTransition($bgColor, $baseBgColor: '') {
+  background-color: $baseBgColor;
+  transform-origin: 50%;
+  @include transition(all 0.5s ease-in-out);
+  &:hover {
+    color: var(--main-bg);
+    background: $bgColor;
+  }
+}
+
+//container color
+@mixin containerColor($containerColorName) {
+  border: 1px solid var(--#{$containerColorName});
+  color: var(--#{$containerColorName});
+  background-color: var(--#{$containerColorName}-alpha);
+}

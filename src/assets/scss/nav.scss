@@ -1,0 +1,71 @@
+nav {
+  position: fixed;
+  width: 100%;
+  top: 10px;
+  left: 0;
+
+  >.nav-item {
+    display: inline;
+    &:not(:last-child) {
+      margin-right: 15px;
+    }
+    &:nth-child(1) {
+      position: fixed;
+      left: var(--margin-side);
+      background: url('@/assets/img/book-blue.svg') no-repeat center / 3rem;
+    }
+    &:nth-child(2) {
+      margin: auto;
+      a {
+        background: url('@/assets/img/serene_light_logo_100.png') no-repeat center;
+        width: 100px;
+        height: 100px;
+        line-height: 75px;
+        &.icon-dark {
+          // background: url('@/assets/img/elegant_dark_logo_100.png') no-repeat center;
+        }
+      }
+    }
+    &:nth-child(3) {
+      position: fixed;
+      right: var(--margin-side);
+      background: url('@/assets/img/cogs-blue.svg') no-repeat center / 3rem;
+    }
+  }
+
+  a {
+    display: inline-block;
+    text-indent: -9999px;
+    width: 80px;
+    height: 80px;
+    border-radius: 75px;
+    line-height: 57px;
+    border: 5px solid var(--secondary);
+    &:hover, &:active {
+      border-color: var(--primary);
+    }
+    &:focus {
+      border-color: var(--primary);
+    }
+    &.router-link-exact-active {
+      border-color: var(--light);
+    }
+
+  }
+
+  &.menu-dark {
+    >.nav-item {
+      &:nth-child(1) {
+        background: url('@/assets/img/book-yellow.svg') no-repeat center / 3rem;
+      }
+      &:nth-child(3) {
+        background: url('@/assets/img/cogs-yellow.svg') no-repeat center / 3rem;
+      }
+    }
+  }
+
+}
+
+.content {
+  margin-top: 100px;
+}

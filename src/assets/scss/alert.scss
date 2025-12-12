@@ -1,0 +1,25 @@
+.alert {
+  cursor: pointer;
+  padding: .75rem 1.25rem;
+  margin-bottom: 1rem;
+  @include containerColor('light');
+  @include animation(puff-in, 0.7s, linear, 1);
+  &.alert-primary {
+    @include containerColor('primary');
+  }
+  &.alert-secondary {
+    @include containerColor('secondary');
+  }
+  &.alert-success {
+    @include containerColor('success');
+  }
+  &.alert-info {
+    @include containerColor('info');
+  }
+  &.alert-warning {
+    @include containerColor('warning');
+  }
+  &.alert-danger {
+    @include containerColor('danger');
+  }
+}
