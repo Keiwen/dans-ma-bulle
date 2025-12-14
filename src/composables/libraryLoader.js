@@ -75,6 +75,8 @@ export function useLibraryLoader (store) {
           }
         }
       }
+      // force alphabetical order
+      list.sort((a, b) => a.name.localeCompare(b.name, ['fr', 'en'], { sensitivity: 'base' }))
     } catch (e) {
       addErrorMessage('An error occurred on pages listing for book ' + bookHandle.name)
       console.error(e)
