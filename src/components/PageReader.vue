@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useLibraryLoader } from '@/composables/libraryLoader'
 import { useFlashMessages } from '@/composables/flashMessages'
@@ -35,6 +35,12 @@ const loadPage = async () => {
     console.error(e)
   }
 }
+
+// watch
+watch(pageIndex, async (newValue) => {
+  loadPage()
+})
+
 onMounted(async () => {
   loadPage()
 })
