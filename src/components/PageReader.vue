@@ -3,6 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useLibraryLoader } from '@/composables/libraryLoader'
 import { useFlashMessages } from '@/composables/flashMessages'
+import PageController from '@/components/PageController'
 
 const store = useStore()
 const { getPageFromBook } = useLibraryLoader()
@@ -34,28 +35,17 @@ const loadPage = async () => {
     console.error(e)
   }
 }
-
-const previousPage = async () => {
-  if (pageIndex.value <= 0) return
-  await store.dispatch('selectPageIndex', pageIndex.value - 1)
-  loadPage()
-}
-
-const nextPage = async () => {
-  await store.dispatch('selectPageIndex', pageIndex.value + 1)
-  loadPage()
-}
-
 onMounted(async () => {
   loadPage()
 })
 </script>
 
 <template>
-  <div class="page-reader">
-    <img :src="pageSrc" :alt="'Page ' + (pageIndex+1)" width="100%" />
-    <div class="page-control-zone previous-page-zone" @click="previousPage">Previous</div>
-    <div class="page-control-zone next-page-zone" @click="nextPage">Next</div>
+  <div>
+    <div class="page-reader">
+      <img :src="pageSrc" :alt="'Page ' + (pageIndex+1)" width="100%" />
+      <page-controller></page-controller>
+    </div>
   </div>
 </template>
 
