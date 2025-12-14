@@ -123,6 +123,11 @@ export function useLibraryLoader (store) {
     return pages[index]
   }
 
+  const getPageCountOfBook = (comicSeries, book) => {
+    const pages = getPagesFromBook(comicSeries, book)
+    return pages.length
+  }
+
   return {
     libraryHandle,
     getLibraryHandle,
@@ -132,6 +137,7 @@ export function useLibraryLoader (store) {
     getBooksFromSeries,
     getPagesFromBook,
     getPageFromBook,
+    getPageCountOfBook,
     isLoading
   }
 }

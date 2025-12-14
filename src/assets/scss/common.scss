@@ -121,7 +121,10 @@ body {
             }
             .info-zone {
                 height: 40px;
-                line-height: 40px;
+                line-height: 15px;
+                .helper {
+                    font-size: x-small;
+                }
             }
         }
     }
