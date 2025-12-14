@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+import PageInfo from '@/components/PageInfo'
 
 const store = useStore()
 
@@ -31,7 +32,7 @@ const nextPage = async () => {
 <template>
   <div class="page-controller">
     <div class="page-controller-zone left-zone" @click="toLeftPage">&laquo;</div>
-    <div class="info-zone"></div>
+    <page-info class="info-zone"></page-info>
     <div class="page-controller-zone right-zone" @click="toRightPage">&raquo;</div>
   </div>
 </template>

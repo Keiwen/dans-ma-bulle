@@ -7,12 +7,13 @@ const store = useStore()
 // computed
 const currentSeries = computed(() => store.getters.comicSeries)
 const currentBook = computed(() => store.getters.book)
+const pageIndex = computed(() => store.getters.getPageIndex(currentSeries.value, currentBook.value))
 
 </script>
 
 <template>
   <div>
-    {{ currentSeries }}: {{ currentBook }}
+    Page {{ pageIndex + 1 }}
   </div>
 </template>
 
