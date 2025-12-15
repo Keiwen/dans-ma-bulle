@@ -12,13 +12,16 @@ const isLastPage = ref(false)
 
 // computed
 const pageIndex = computed(() => store.getters.getCurrentPageIndex())
+const rightToLeft = computed(() => store.getters.rightToLeft)
+const leftLabel = computed(() => rightToLeft.value ? 'Next' : 'Previous')
+const rightLabel = computed(() => rightToLeft.value ? 'Previous' : 'Next')
 
 const toLeftPage = async () => {
-  await previousPage()
+  rightToLeft.value ? await nextPage() : await previousPage()
 }
 
 const toRightPage = async () => {
-  await nextPage()
+  rightToLeft.value ? await previousPage() : await nextPage()
 }
 
 const previousPage = async () => {
@@ -43,9 +46,9 @@ onMounted(async () => {
 
 <template>
   <div class="page-controller">
-    <button class="page-controller-zone left-zone btn" @click="toLeftPage" :disabled="isFirstPage">&laquo; Previous</button>
+    <button class="page-controller-zone left-zone btn" @click="toLeftPage" :disabled="rightToLeft ? isLastPage : isFirstPage">&laquo; {{ leftLabel }}</button>
     <page-info class="info-zone"></page-info>
-    <button class="page-controller-zone right-zone btn" @click="toRightPage" :disabled="isLastPage">Next &raquo;</button>
+    <button class="page-controller-zone right-zone btn" @click="toRightPage" :disabled="rightToLeft ? isFirstPage : isLastPage">{{ rightLabel }} &raquo;</button>
   </div>
 </template>
 

@@ -22,6 +22,7 @@ export default createStore({
     comicSeries: '',
     book: '',
     shelf: {},
+    rightToLeft: false,
     theme: 'light'
   },
   getters: {
@@ -29,6 +30,7 @@ export default createStore({
     book: (state) => state.book,
     theme: (state) => state.theme,
     shelf: (state) => state.shelf,
+    rightToLeft: (state) => state.rightToLeft,
     getBookOnShelf: (state, getters) => (comicSeries, book) => {
       if (!comicSeries) comicSeries = getters.comicSeries
       if (!comicSeries) return null
@@ -63,6 +65,9 @@ export default createStore({
     },
     setTheme (state, theme) {
       state.theme = theme
+    },
+    setRightToLeft (state, rightToLeft) {
+      state.rightToLeft = rightToLeft
     },
     addBookOnShelf (state, comicSeriesAndBook) {
       if (!state.shelf[comicSeriesAndBook.comicSeries]) state.shelf[comicSeriesAndBook.comicSeries] = {}
@@ -99,6 +104,9 @@ export default createStore({
     },
     setTheme ({ commit }, theme) {
       commit('setTheme', theme)
+    },
+    setRightToLeft ({ commit }, rightToLeft) {
+      commit('setRightToLeft', rightToLeft)
     },
     addBookOnShelf ({ getters, commit }, comicSeries, book) {
       if (!comicSeries) comicSeries = getters.comicSeries

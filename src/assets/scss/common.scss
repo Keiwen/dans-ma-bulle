@@ -112,12 +112,11 @@ body {
                 justify-content: center;
                 margin-bottom: 0;
                 font-size: small;
+                background-color: var(--secondary);
                 &.left-zone {
-                    background-color: var(--secondary);
                     left: 0;
                 }
                 &.right-zone {
-                    background-color: var(--secondary);
                     right: 0;
                 }
                 &:disabled {

@@ -1,6 +1,7 @@
 <script setup>
 import PackageJson from '@/../package.json'
 import SettingTheme from '@/components/SettingTheme'
+import SettingRightToLeft from '@/components/SettingRightToLeft'
 
 const appVersion = PackageJson.version
 
@@ -14,6 +15,7 @@ const appVersion = PackageJson.version
     <p class="help">You are using version {{ appVersion }}</p>
     <div class="settings-container">
       <setting-theme></setting-theme>
+      <setting-right-to-left></setting-right-to-left>
     </div>
   </div>
 </template>
