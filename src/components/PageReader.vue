@@ -54,5 +54,16 @@ onMounted(async () => {
 </template>
 
 <style scoped lang="scss">
+.page-reader {
+  width: 100%;
+  height: 100%;
 
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--light);
+    margin-bottom: 2px;
+  }
+}
 </style>
