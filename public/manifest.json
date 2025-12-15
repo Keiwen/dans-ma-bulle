@@ -4,7 +4,7 @@
   "description": "Comic books local reader",
   "start_url": "/dans-ma-bulle/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#FFFDF4",
   "theme_color": "#0C487B",
   "icons": [
