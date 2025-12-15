@@ -117,17 +117,6 @@ export function useLibraryLoader (store) {
     return shelf.value[comicSeries][book]
   }
 
-  const getPageFromBook = (comicSeries, book, index) => {
-    const pages = getPagesFromBook(comicSeries, book)
-    if (!pages[index]) return null
-    return pages[index]
-  }
-
-  const getPageCountOfBook = (comicSeries, book) => {
-    const pages = getPagesFromBook(comicSeries, book)
-    return pages.length
-  }
-
   return {
     libraryHandle,
     getLibraryHandle,
@@ -136,8 +125,6 @@ export function useLibraryLoader (store) {
     getSeriesList,
     getBooksFromSeries,
     getPagesFromBook,
-    getPageFromBook,
-    getPageCountOfBook,
     isLoading
   }
 }

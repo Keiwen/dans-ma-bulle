@@ -42,6 +42,9 @@ export default createStore({
       const bookOnShelf = getters.getBookOnShelf(comicSeries, book)
       if (!bookOnShelf) return 0
       return bookOnShelf.pageIndex ?? 0
+    },
+    getCurrentPageIndex: (state, getters) => () => {
+      return getters.getPageIndex(getters.comicSeries, getters.book)
     }
   },
   mutations: {

@@ -1,23 +1,21 @@
 <script setup>
 import { computed, ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
-import { useLibraryLoader } from '@/composables/libraryLoader'
+import { usePageManager } from '@/composables/pageManager'
 import { useFlashMessages } from '@/composables/flashMessages'
 import PageController from '@/components/PageController'
 
 const store = useStore()
-const { getPageFromBook } = useLibraryLoader()
+const { getCurrentPage } = usePageManager()
 const { addErrorMessage } = useFlashMessages()
 
 const pageSrc = ref(null)
 
 // computed
-const currentSeries = computed(() => store.getters.comicSeries)
-const currentBook = computed(() => store.getters.book)
-const pageIndex = computed(() => store.getters.getPageIndex(currentSeries.value, currentBook.value))
+const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const loadPage = async () => {
-  const pageHandle = getPageFromBook(currentSeries.value, currentBook.value, pageIndex.value)
+  const pageHandle = getCurrentPage()
   if (!pageHandle) {
     addErrorMessage('No page found')
     return

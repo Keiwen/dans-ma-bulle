@@ -110,6 +110,8 @@ body {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                margin-bottom: 0;
+                font-size: small;
                 &.left-zone {
                     background-color: var(--secondary);
                     left: 0;
@@ -117,6 +119,10 @@ body {
                 &.right-zone {
                     background-color: var(--secondary);
                     right: 0;
+                }
+                &:disabled {
+                    cursor: not-allowed;
+                    opacity: 0.5;
                 }
             }
             .info-zone {

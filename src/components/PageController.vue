@@ -1,14 +1,17 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import PageInfo from '@/components/PageInfo'
+import { usePageManager } from '@/composables/pageManager'
 
 const store = useStore()
+const { goToPage, isCurrentPageIsFirst, isCurrentPageIsLast } = usePageManager()
+
+const isFirstPage = ref(false)
+const isLastPage = ref(false)
 
 // computed
-const currentSeries = computed(() => store.getters.comicSeries)
-const currentBook = computed(() => store.getters.book)
-const pageIndex = computed(() => store.getters.getPageIndex(currentSeries.value, currentBook.value))
+const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const toLeftPage = async () => {
   await previousPage()
@@ -19,21 +22,30 @@ const toRightPage = async () => {
 }
 
 const previousPage = async () => {
-  if (pageIndex.value <= 0) return
-  await store.dispatch('selectPageIndex', pageIndex.value - 1)
+  await goToPage(pageIndex.value)
 }
 
 const nextPage = async () => {
-  await store.dispatch('selectPageIndex', pageIndex.value + 1)
+  await goToPage(pageIndex.value + 2)
 }
 
+// watch
+watch(pageIndex, async (newValue) => {
+  isFirstPage.value = isCurrentPageIsFirst()
+  isLastPage.value = isCurrentPageIsLast()
+})
+
+onMounted(async () => {
+  isFirstPage.value = isCurrentPageIsFirst()
+  isLastPage.value = isCurrentPageIsLast()
+})
 </script>
 
 <template>
   <div class="page-controller">
-    <div class="page-controller-zone left-zone" @click="toLeftPage">&laquo;</div>
+    <button class="page-controller-zone left-zone btn" @click="toLeftPage" :disabled="isFirstPage">&laquo; Previous</button>
     <page-info class="info-zone"></page-info>
-    <div class="page-controller-zone right-zone" @click="toRightPage">&raquo;</div>
+    <button class="page-controller-zone right-zone btn" @click="toRightPage" :disabled="isLastPage">Next &raquo;</button>
   </div>
 </template>
 
