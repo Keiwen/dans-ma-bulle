@@ -57,6 +57,8 @@ onMounted(async () => {
 .page-reader {
   width: 100%;
   height: 100%;
+  z-index: 20;
+  position: relative;
 
   img {
     display: block;
