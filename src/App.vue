@@ -60,7 +60,7 @@ const computeAlertClass = (type) => {
   width: 100%;
   bottom: 0;
   left: 0;
-  z-index: 10;
+  z-index: 50;
 
   .alert {
     margin-right: var(--margin-side);
