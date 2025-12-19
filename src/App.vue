@@ -55,4 +55,17 @@ const computeAlertClass = (type) => {
   }
 }
 
+.message-container {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+
+  .alert {
+    margin-right: var(--margin-side);
+    margin-left: var(--margin-side);
+  }
+}
+
 </style>
