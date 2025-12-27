@@ -80,3 +80,8 @@
   color: var(--#{$containerColorName});
   background-color: var(--#{$containerColorName}-alpha);
 }
+@mixin containerColorDark($containerColorName) {
+  border: 1px solid var(--black);
+  color: var(--black);
+  background-color: var(--#{$containerColorName}-darken);
+}

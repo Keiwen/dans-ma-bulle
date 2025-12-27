@@ -41,6 +41,7 @@ const computeAlertClass = (type) => {
     --border-radius: 50px;
     --primary: #DDB04B;
     --primary-alpha: #DDB04B40;
+    --primary-darken: #DDB04B80;
   }
   & > div.theme-light {
     --main-color: #0C487B;
@@ -52,6 +53,7 @@ const computeAlertClass = (type) => {
     --dark: #FFFFFF;
     --primary: #0C487B;
     --primary-alpha: #0C487B40;
+    --primary-darken: #0C487B80;
   }
 }
 
@@ -62,10 +64,6 @@ const computeAlertClass = (type) => {
   left: 0;
   z-index: 50;
 
-  .alert {
-    margin-right: var(--margin-side);
-    margin-left: var(--margin-side);
-  }
 }
 
 </style>

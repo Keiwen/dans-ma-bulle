@@ -2,6 +2,8 @@
   cursor: pointer;
   padding: .75rem 1.25rem;
   margin-bottom: 1rem;
+  margin-right: var(--margin-side);
+  margin-left: var(--margin-side);
   @include containerColor('light');
   @include animation(puff-in, 0.7s, linear, 1);
   &.alert-primary {
@@ -21,5 +23,26 @@
   }
   &.alert-danger {
     @include containerColor('danger');
+  }
+}
+
+&.theme-light .alert {
+  &.alert-primary {
+    @include containerColorDark('primary');
+  }
+  &.alert-secondary {
+    @include containerColorDark('secondary');
+  }
+  &.alert-success {
+    @include containerColorDark('success');
+  }
+  &.alert-info {
+    @include containerColorDark('info');
+  }
+  &.alert-warning {
+    @include containerColorDark('warning');
+  }
+  &.alert-danger {
+    @include containerColorDark('danger');
   }
 }
