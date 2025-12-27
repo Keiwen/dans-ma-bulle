@@ -6,9 +6,11 @@ import { useStorageInstance } from '@/composables/storageInstance'
 
 const libraryHandle = ref(null)
 const shelf = ref({})
+const isLoading = ref(false)
+const totalBooksCount = ref(0)
+const loadedBooksCount = ref(0)
 
 export function useLibraryLoader (store) {
-  let isLoading = false
   if (!store) store = useStore()
   const { addErrorMessage } = useFlashMessages()
 
@@ -85,21 +87,29 @@ export function useLibraryLoader (store) {
   }
 
   const loadLibrary = async (mainHandle) => {
-    isLoading = true
+    isLoading.value = true
+    totalBooksCount.value = 0
+    loadedBooksCount.value = 0
     libraryHandle.value = mainHandle
     shelf.value = {}
     const allSeries = await listSeries()
+    // this first loop is only needed to count books for loader without a real read but it does not affect perfs
+    for (const seriesHandle of allSeries) {
+      const books = await listBooksFromSeries(seriesHandle)
+      totalBooksCount.value += books.length
+    }
     for (const seriesHandle of allSeries) {
       const comicSeriesBooks = {}
       const books = await listBooksFromSeries(seriesHandle)
       for (const bookHandle of books) {
         comicSeriesBooks[bookHandle.name] = await listPagesFromBook(bookHandle)
+        loadedBooksCount.value++
       }
       shelf.value[seriesHandle.name] = comicSeriesBooks
     }
     await store.dispatch('selectLibrary', mainHandle.name)
     await useStorageInstance().setLibraryHandle(mainHandle)
-    isLoading = false
+    isLoading.value = false
   }
 
   const getSeriesList = () => {
@@ -119,6 +129,8 @@ export function useLibraryLoader (store) {
 
   return {
     libraryHandle,
+    totalBooksCount,
+    loadedBooksCount,
     getLibraryHandle,
     shelf,
     loadLibrary,
