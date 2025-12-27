@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { FILE_EXTENSIONS_SUPPORTED } from '@/constants'
+import { PAGE_EXTENSIONS_SUPPORTED } from '@/constants'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useStorageInstance } from '@/composables/storageInstance'
@@ -74,7 +74,7 @@ export function useLibraryLoader (store) {
         if (entry.kind === 'file') {
           // get file extension
           const extension = name.slice(name.lastIndexOf('.'))
-          if (FILE_EXTENSIONS_SUPPORTED.includes(extension)) {
+          if (PAGE_EXTENSIONS_SUPPORTED.includes(extension)) {
             list.push(entry)
           } else {
             console.log('File extension not supported for file ' + bookHandle.name + '/' + name)
@@ -105,6 +105,7 @@ export function useLibraryLoader (store) {
     for (const seriesHandle of allSeries) {
       const comicSeriesBooks = {}
       const books = await listBooksFromSeries(seriesHandle)
+      // here I should only keep book handle. Depending on type, i would handle pages or file later
       for (const bookHandle of books) {
         comicSeriesBooks[bookHandle.name] = await listPagesFromBook(bookHandle)
         loadedBooksCount.value++

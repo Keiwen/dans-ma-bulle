@@ -1,8 +1,11 @@
 // mode used to browse user's directories
 export const DIRECTORY_PERMISSION_MODE = 'read'
 
-// list of extension supported by the application
-export const FILE_EXTENSIONS_SUPPORTED = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']
+// list of extensions for book files supported by the application. It always includes directories
+export const BOOK_EXTENSIONS_SUPPORTED = []
+
+// list of extensions for page files supported by the application
+export const PAGE_EXTENSIONS_SUPPORTED = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']
 
 // key used for persistence
 export const PERSISTENCE_KEY = 'keiwen-dans-ma-bulle'
