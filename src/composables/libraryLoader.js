@@ -4,13 +4,17 @@ import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useStorageInstance } from '@/composables/storageInstance'
 
-const libraryHandle = ref(null)
-const shelf = ref({})
-const isLoading = ref(false)
-const totalBooksCount = ref(0)
-const loadedBooksCount = ref(0)
+let instance = null
 
 export function useLibraryLoader (store) {
+  if (instance) return instance // always return instance if exist
+
+  const libraryHandle = ref(null)
+  const shelf = ref({})
+  const isLoading = ref(false)
+  const totalBooksCount = ref(0)
+  const loadedBooksCount = ref(0)
+
   if (!store) store = useStore()
   const { addErrorMessage } = useFlashMessages()
 
@@ -127,7 +131,7 @@ export function useLibraryLoader (store) {
     return shelf.value[comicSeries][book]
   }
 
-  return {
+  instance = {
     libraryHandle,
     totalBooksCount,
     loadedBooksCount,
@@ -139,4 +143,6 @@ export function useLibraryLoader (store) {
     getPagesFromBook,
     isLoading
   }
+
+  return instance
 }

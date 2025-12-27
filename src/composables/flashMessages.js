@@ -1,8 +1,12 @@
 import { ref } from 'vue'
 
-const flashMessages = ref([])
+let instance = null
 
 export function useFlashMessages () {
+  if (instance) return instance // always return instance if exist
+
+  const flashMessages = ref([])
+
   const addMessage = (messageObject) => {
     flashMessages.value.push(messageObject)
   }
@@ -38,5 +42,6 @@ export function useFlashMessages () {
     flashMessages.value = persisted
   }
 
-  return { flashMessages, addSuccessMessage, addInfoMessage, addWarningMessage, addErrorMessage, clearMessage, clearAllMessages }
+  instance = { flashMessages, addSuccessMessage, addInfoMessage, addWarningMessage, addErrorMessage, clearMessage, clearAllMessages }
+  return instance
 }
