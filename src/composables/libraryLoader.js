@@ -12,7 +12,6 @@ export function useLibraryLoader (store) {
   const libraryHandle = ref(null)
   const shelf = ref({})
   const isLoading = ref(false)
-  const totalBooksCount = ref(0)
   const loadedBooksCount = ref(0)
 
   if (!store) store = useStore()
@@ -54,6 +53,7 @@ export function useLibraryLoader (store) {
 
     try {
       for await (const [, entry] of seriesHandle.entries()) {
+        // TODO this to be changed
         if (entry.kind === 'directory') {
           list.push(entry)
         }
@@ -65,9 +65,10 @@ export function useLibraryLoader (store) {
     return list
   }
 
-  const listPagesFromBook = async (bookHandle) => {
+  const listPagesFromBookDirectory = async (bookHandle) => {
     const list = []
     if (!bookHandle) return list
+    if (bookHandle.kind !== 'directory') return list
 
     try {
       for await (const [name, entry] of bookHandle.entries()) {
@@ -92,25 +93,18 @@ export function useLibraryLoader (store) {
 
   const loadLibrary = async (mainHandle) => {
     isLoading.value = true
-    totalBooksCount.value = 0
     loadedBooksCount.value = 0
     libraryHandle.value = mainHandle
     shelf.value = {}
     const allSeries = await listSeries()
-    // this first loop is only needed to count books for loader without a real read but it does not affect perfs
-    for (const seriesHandle of allSeries) {
-      const books = await listBooksFromSeries(seriesHandle)
-      totalBooksCount.value += books.length
-    }
     for (const seriesHandle of allSeries) {
       const comicSeriesBooks = {}
       const books = await listBooksFromSeries(seriesHandle)
-      // here I should only keep book handle. Depending on type, i would handle pages or file later
       for (const bookHandle of books) {
-        comicSeriesBooks[bookHandle.name] = await listPagesFromBook(bookHandle)
+        comicSeriesBooks[bookHandle.name] = bookHandle
         loadedBooksCount.value++
       }
-      shelf.value[seriesHandle.name] = comicSeriesBooks
+      if (books.length) shelf.value[seriesHandle.name] = comicSeriesBooks
     }
     await store.dispatch('selectLibrary', mainHandle.name)
     await useStorageInstance().setLibraryHandle(mainHandle)
@@ -126,22 +120,28 @@ export function useLibraryLoader (store) {
     return Object.keys(shelf.value[comicSeries])
   }
 
-  const getPagesFromBook = (comicSeries, book) => {
+  const getBookHandle = (comicSeries, book) => {
+    if (!shelf.value[comicSeries]) return null
+    if (!shelf.value[comicSeries][book]) return null
+    return shelf.value[comicSeries][book]
+  }
+
+  const getPagesFromBookDirectory = async (comicSeries, book) => {
     if (!shelf.value[comicSeries]) return []
     if (!shelf.value[comicSeries][book]) return []
-    return shelf.value[comicSeries][book]
+    return await listPagesFromBookDirectory(shelf.value[comicSeries][book])
   }
 
   instance = {
     libraryHandle,
-    totalBooksCount,
     loadedBooksCount,
     getLibraryHandle,
     shelf,
     loadLibrary,
     getSeriesList,
     getBooksFromSeries,
-    getPagesFromBook,
+    getPagesFromBookDirectory,
+    getBookHandle,
     isLoading
   }
 

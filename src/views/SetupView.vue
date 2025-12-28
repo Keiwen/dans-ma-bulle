@@ -6,7 +6,7 @@ import { useLibraryLoader } from '@/composables/libraryLoader'
 
 const route = useRoute()
 
-const { isLoading, totalBooksCount, loadedBooksCount } = useLibraryLoader()
+const { isLoading, loadedBooksCount } = useLibraryLoader()
 
 const restoreOption = route.query.restore ?? false
 </script>
@@ -16,6 +16,6 @@ const restoreOption = route.query.restore ?? false
     <h1>Library setup</h1>
     <library-path-setup></library-path-setup>
     <library-path-restore v-if="restoreOption"></library-path-restore>
-    <p v-if="isLoading">Loading: {{ loadedBooksCount }} / {{ totalBooksCount }}</p>
+    <p v-if="isLoading">Loading... {{ loadedBooksCount }} books found</p>
   </div>
 </template>

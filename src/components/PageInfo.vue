@@ -4,14 +4,14 @@ import { useStore } from 'vuex'
 import { usePageManager } from '@/composables/pageManager'
 
 const store = useStore()
-const { getPageCountOfBook, goToPage } = usePageManager()
+const { getPageCount, goToPage } = usePageManager()
 
 const pageNumber = ref(0)
+const pageCount = ref(0)
 let timeout
 
 // computed
 const pageIndex = computed(() => store.getters.getCurrentPageIndex())
-const pageCount = computed(() => getPageCountOfBook(store.getters.comicSeries, store.getters.book))
 
 const checkChange = () => {
   clearTimeout(timeout)
@@ -31,6 +31,7 @@ watch(pageIndex, async (newValue) => {
 
 onMounted(async () => {
   pageNumber.value = pageIndex.value + 1
+  pageCount.value = getPageCount()
 })
 </script>
 

@@ -1,13 +1,13 @@
 <script setup>
 // @ is an alias to /src
 import BookInfo from '@/components/BookInfo'
-import PageReader from '@/components/PageReader'
+import AbstractReader from '@/components/AbstractReader'
 
 </script>
 
 <template>
   <div>
     <book-info></book-info>
-    <page-reader></page-reader>
+    <abstract-reader></abstract-reader>
   </div>
 </template>

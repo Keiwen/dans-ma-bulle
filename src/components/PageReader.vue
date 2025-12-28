@@ -6,7 +6,7 @@ import { useFlashMessages } from '@/composables/flashMessages'
 import PageController from '@/components/PageController'
 
 const store = useStore()
-const { getCurrentPage } = usePageManager()
+const { loadPages, getCurrentPage } = usePageManager()
 const { addErrorMessage } = useFlashMessages()
 
 const pageSrc = ref(null)
@@ -36,11 +36,12 @@ const loadPage = async () => {
 
 // watch
 watch(pageIndex, async (newValue) => {
-  loadPage()
+  await loadPage()
 })
 
 onMounted(async () => {
-  loadPage()
+  await loadPages()
+  await loadPage()
 })
 </script>
 

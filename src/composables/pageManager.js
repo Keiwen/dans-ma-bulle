@@ -2,28 +2,35 @@ import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useLibraryLoader } from '@/composables/libraryLoader'
 
+let instance = null
+
 export function usePageManager (store) {
+  if (instance) return instance // always return instance if exist
+
   if (!store) store = useStore()
   const libraryLoader = useLibraryLoader()
   const { addWarningMessage } = useFlashMessages()
+  let loadedSeries = ''
+  let loadedBook = ''
+  let loadedPages = []
 
-  const getPageFromBook = (comicSeries, book, index) => {
-    const pages = libraryLoader.getPagesFromBook(comicSeries, book)
-    if (!pages[index]) return null
-    return pages[index]
+  const loadPages = async () => {
+    loadedSeries = store.getters.comicSeries
+    loadedBook = store.getters.book
+    loadedPages = await libraryLoader.getPagesFromBookDirectory(loadedSeries, loadedBook)
   }
 
-  const getPageCountOfBook = (comicSeries, book) => {
-    const pages = libraryLoader.getPagesFromBook(comicSeries, book)
-    return pages.length
+  const getPage = (index) => {
+    if (!loadedPages[index]) return null
+    return loadedPages[index]
+  }
+
+  const getPageCount = () => {
+    return loadedPages.length
   }
 
   const getCurrentPage = () => {
-    return getPageFromBook(store.getters.comicSeries, store.getters.book, store.getters.getCurrentPageIndex())
-  }
-
-  const getPageCountOfCurrentBook = () => {
-    return getPageCountOfBook(store.getters.comicSeries, store.getters.book)
+    return getPage(store.getters.getCurrentPageIndex())
   }
 
   const isCurrentPageIsFirst = () => {
@@ -33,7 +40,7 @@ export function usePageManager (store) {
 
   const isCurrentPageIsLast = () => {
     const currentPageNumber = store.getters.getCurrentPageIndex() + 1
-    return currentPageNumber === getPageCountOfCurrentBook()
+    return currentPageNumber === getPageCount()
   }
 
   const goToPage = async (pageNumber) => {
@@ -41,7 +48,7 @@ export function usePageManager (store) {
       pageNumber = 1
       addWarningMessage('First page reached')
     }
-    const maxPage = getPageCountOfCurrentBook()
+    const maxPage = getPageCount()
     if (pageNumber > maxPage) {
       pageNumber = maxPage
       addWarningMessage('Last page reached')
@@ -50,12 +57,14 @@ export function usePageManager (store) {
     await store.dispatch('selectPageIndex', pageIndex)
   }
 
-  return {
-    getPageFromBook,
-    getPageCountOfBook,
+  instance = {
+    loadPages,
+    getPage,
+    getPageCount,
     getCurrentPage,
     isCurrentPageIsFirst,
     isCurrentPageIsLast,
     goToPage
   }
+  return instance
 }
