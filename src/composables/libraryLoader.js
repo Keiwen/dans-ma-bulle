@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { PAGE_EXTENSIONS_SUPPORTED } from '@/constants'
+import { PAGE_EXTENSIONS_SUPPORTED, BOOK_TYPE_IMAGE_FOLDER } from '@/constants'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useStorageInstance } from '@/composables/storageInstance'
@@ -53,8 +53,8 @@ export function useLibraryLoader (store) {
 
     try {
       for await (const [, entry] of seriesHandle.entries()) {
-        // TODO this to be changed
         if (entry.kind === 'directory') {
+          entry.__bookType = BOOK_TYPE_IMAGE_FOLDER
           list.push(entry)
         }
       }
@@ -68,7 +68,7 @@ export function useLibraryLoader (store) {
   const listPagesFromBookDirectory = async (bookHandle) => {
     const list = []
     if (!bookHandle) return list
-    if (bookHandle.kind !== 'directory') return list
+    if (bookHandle.__bookType !== BOOK_TYPE_IMAGE_FOLDER) return list
 
     try {
       for await (const [name, entry] of bookHandle.entries()) {

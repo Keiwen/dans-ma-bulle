@@ -9,3 +9,5 @@ export const PAGE_EXTENSIONS_SUPPORTED = ['.jpg', '.jpeg', '.png', '.bmp', '.tif
 
 // key used for persistence
 export const PERSISTENCE_KEY = 'keiwen-dans-ma-bulle'
+
+export const BOOK_TYPE_IMAGE_FOLDER = 'image_folder'

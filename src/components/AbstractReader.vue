@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { BOOK_TYPE_IMAGE_FOLDER } from '@/constants'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useLibraryLoader } from '@/composables/libraryLoader'
 import PageReader from '@/components/PageReader'
@@ -18,8 +19,8 @@ const loadBook = async () => {
     addErrorMessage('No book found')
     return
   }
-  switch (bookHandle.kind) {
-    case 'directory':
+  switch (bookHandle.__bookType) {
+    case BOOK_TYPE_IMAGE_FOLDER:
       readerType.value = 'pageReader'
       break
   }
