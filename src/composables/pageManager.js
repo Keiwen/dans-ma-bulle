@@ -55,8 +55,13 @@ export function usePageManager (store) {
     }
     const pageIndex = pageNumber - 1
     await store.dispatch('selectPageIndex', pageIndex)
+    // flag book as completed if last page reached
     if (pageNumber === maxPage) {
-      await store.dispatch('completeBook')
+      await store.dispatch('flagBookCompletion', true)
+    }
+    // unflag if moved to first page if need to restart it
+    if (pageNumber === 1) {
+      await store.dispatch('flagBookCompletion', false)
     }
   }
 

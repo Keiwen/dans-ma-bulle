@@ -112,8 +112,8 @@ export default createStore({
     selectPageIndex ({ commit }, index) {
       commit('setPageIndex', index)
     },
-    completeBook ({ commit }) {
-      commit('setBookCompleted', true)
+    flagBookCompletion ({ commit }, completionFlag) {
+      commit('setBookCompleted', completionFlag)
     },
     setTheme ({ commit }, theme) {
       commit('setTheme', theme)
