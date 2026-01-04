@@ -45,6 +45,11 @@ export default createStore({
       if (!bookOnShelf) return 0
       return bookOnShelf.pageIndex ?? 0
     },
+    isBookCompleted: (state, getters) => (comicSeries, book) => {
+      const bookOnShelf = getters.getBookOnShelf(comicSeries, book)
+      if (!bookOnShelf) return false
+      return bookOnShelf.completed ?? false
+    },
     getCurrentPageIndex: (state, getters) => () => {
       return getters.getPageIndex(getters.comicSeries, getters.book)
     }
@@ -63,6 +68,10 @@ export default createStore({
       const book = state.shelf[state.comicSeries][state.book]
       book.pageIndex = index
     },
+    setBookCompleted (state, completedFlag) {
+      const book = state.shelf[state.comicSeries][state.book]
+      book.completed = completedFlag
+    },
     setTheme (state, theme) {
       state.theme = theme
     },
@@ -72,7 +81,8 @@ export default createStore({
     addBookOnShelf (state, comicSeriesAndBook) {
       if (!state.shelf[comicSeriesAndBook.comicSeries]) state.shelf[comicSeriesAndBook.comicSeries] = {}
       state.shelf[comicSeriesAndBook.comicSeries][comicSeriesAndBook.book] = {
-        pageIndex: 0
+        pageIndex: 0,
+        completed: false
       }
     },
     resetSelection (state) {
@@ -101,6 +111,9 @@ export default createStore({
     },
     selectPageIndex ({ commit }, index) {
       commit('setPageIndex', index)
+    },
+    completeBook ({ commit }) {
+      commit('setBookCompleted', true)
     },
     setTheme ({ commit }, theme) {
       commit('setTheme', theme)
