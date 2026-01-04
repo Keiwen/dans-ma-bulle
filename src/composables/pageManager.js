@@ -55,6 +55,9 @@ export function usePageManager (store) {
     }
     const pageIndex = pageNumber - 1
     await store.dispatch('selectPageIndex', pageIndex)
+    if (pageNumber === maxPage) {
+      await store.dispatch('completeBook')
+    }
   }
 
   instance = {
