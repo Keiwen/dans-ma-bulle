@@ -4,10 +4,9 @@ import { useStore } from 'vuex'
 import { usePageManager } from '@/composables/pageManager'
 
 const store = useStore()
-const { getPageCount, goToPage } = usePageManager()
+const { pageCount, goToPage } = usePageManager()
 
 const pageNumber = ref(0)
-const pageCount = ref(0)
 let timeout
 
 // computed
@@ -31,7 +30,6 @@ watch(pageIndex, async (newValue) => {
 
 onMounted(async () => {
   pageNumber.value = pageIndex.value + 1
-  pageCount.value = getPageCount()
 })
 </script>
 

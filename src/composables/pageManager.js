@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useLibraryLoader } from '@/composables/libraryLoader'
@@ -13,20 +14,19 @@ export function usePageManager (store) {
   let loadedSeries = ''
   let loadedBook = ''
   let loadedPages = []
+  const pageCount = ref(0)
 
   const loadPages = async () => {
+    loadedPages = []
     loadedSeries = store.getters.comicSeries
     loadedBook = store.getters.book
     loadedPages = await libraryLoader.getPagesFromBookDirectory(loadedSeries, loadedBook)
+    pageCount.value = loadedPages.length
   }
 
   const getPage = (index) => {
     if (!loadedPages[index]) return null
     return loadedPages[index]
-  }
-
-  const getPageCount = () => {
-    return loadedPages.length
   }
 
   const getCurrentPage = () => {
@@ -40,7 +40,7 @@ export function usePageManager (store) {
 
   const isCurrentPageIsLast = () => {
     const currentPageNumber = store.getters.getCurrentPageIndex() + 1
-    return currentPageNumber === getPageCount()
+    return currentPageNumber === pageCount.value
   }
 
   const goToPage = async (pageNumber) => {
@@ -48,15 +48,14 @@ export function usePageManager (store) {
       pageNumber = 1
       addWarningMessage('First page reached')
     }
-    const maxPage = getPageCount()
-    if (pageNumber > maxPage) {
-      pageNumber = maxPage
+    if (pageNumber > pageCount.value) {
+      pageNumber = pageCount.value
       addWarningMessage('Last page reached')
     }
     const pageIndex = pageNumber - 1
     await store.dispatch('selectPageIndex', pageIndex)
     // flag book as completed if last page reached
-    if (pageNumber === maxPage) {
+    if (pageNumber === pageCount.value) {
       await store.dispatch('flagBookCompletion', true)
     }
     // unflag if moved to first page if need to restart it
@@ -66,9 +65,9 @@ export function usePageManager (store) {
   }
 
   instance = {
+    pageCount,
     loadPages,
     getPage,
-    getPageCount,
     getCurrentPage,
     isCurrentPageIsFirst,
     isCurrentPageIsLast,
