@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { PAGE_EXTENSIONS_SUPPORTED, BOOK_TYPE_IMAGE_FOLDER } from '@/constants'
+import { PAGE_EXTENSIONS_SUPPORTED, BOOK_TYPE_IMAGE_FOLDER, BOOK_EXTENSIONS_SUPPORTED, BOOK_TYPE_PDF } from '@/constants'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useStorageInstance } from '@/composables/storageInstance'
@@ -56,8 +56,23 @@ export function useLibraryLoader (store) {
         if (entry.kind === 'directory') {
           entry.__bookType = BOOK_TYPE_IMAGE_FOLDER
           list.push(entry)
+        } else {
+          // get file extension
+          const extension = entry.name.slice(entry.name.lastIndexOf('.'))
+          if (BOOK_EXTENSIONS_SUPPORTED.includes(extension)) {
+            switch (extension) {
+              case '.pdf': entry.__bookType = BOOK_TYPE_PDF; break
+              default:
+                entry.__bookType = 'file'
+            }
+            list.push(entry)
+          } else {
+            console.log('File extension not supported for book: ' + seriesHandle.name + '/' + entry.name, extension)
+          }
         }
       }
+      // force alphabetical order
+      list.sort((a, b) => a.name.localeCompare(b.name, ['fr', 'en'], { sensitivity: 'base' }))
     } catch (e) {
       addErrorMessage('An error occurred on books listing for comic series ' + seriesHandle.name)
       console.error(e)
@@ -78,7 +93,7 @@ export function useLibraryLoader (store) {
           if (PAGE_EXTENSIONS_SUPPORTED.includes(extension)) {
             list.push(entry)
           } else {
-            console.log('File extension not supported for file ' + bookHandle.name + '/' + name)
+            console.log('File extension not supported for page: ' + bookHandle.name + '/' + name)
           }
         }
       }

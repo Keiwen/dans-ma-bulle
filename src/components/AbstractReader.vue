@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useStore } from 'vuex'
-import { BOOK_TYPE_IMAGE_FOLDER } from '@/constants'
+import { BOOK_TYPE_IMAGE_FOLDER, BOOK_TYPE_PDF } from '@/constants'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useLibraryLoader } from '@/composables/libraryLoader'
 import PageReader from '@/components/PageReader'
+import PdfReader from '@/components/PDFReader'
 
 const store = useStore()
 const { getBookHandle } = useLibraryLoader()
@@ -23,6 +24,9 @@ const loadBook = async () => {
     case BOOK_TYPE_IMAGE_FOLDER:
       readerType.value = 'pageReader'
       break
+    case BOOK_TYPE_PDF:
+      readerType.value = 'pdfReader'
+      break
   }
   if (readerType.value === '') {
     addErrorMessage('Unable to read book')
@@ -39,6 +43,9 @@ onMounted(async () => {
   <div>
     <div v-if="readerType === 'pageReader'">
       <page-reader></page-reader>
+    </div>
+    <div v-if="readerType === 'pdfReader'">
+      <pdf-reader></pdf-reader>
     </div>
   </div>
 </template>
