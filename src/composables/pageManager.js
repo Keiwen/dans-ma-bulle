@@ -33,6 +33,13 @@ export function usePageManager (store) {
     return getPage(store.getters.getCurrentPageIndex())
   }
 
+  const loadFullBook = async (knownPageCount) => {
+    loadedPages = []
+    loadedSeries = store.getters.comicSeries
+    loadedBook = store.getters.book
+    pageCount.value = knownPageCount
+  }
+
   const isCurrentPageIsFirst = () => {
     const currentPageNumber = store.getters.getCurrentPageIndex() + 1
     return currentPageNumber === 1
@@ -66,6 +73,7 @@ export function usePageManager (store) {
 
   instance = {
     pageCount,
+    loadFullBook,
     loadPages,
     getPage,
     getCurrentPage,
