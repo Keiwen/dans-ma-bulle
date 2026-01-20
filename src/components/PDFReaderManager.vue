@@ -4,7 +4,6 @@ import { watch } from 'vue'
 import { useActiveDocument } from '@embedpdf/plugin-document-manager/vue'
 
 const props = defineProps({
-  documentId: { type: String },
   isLoaded: { type: Boolean }
 })
 const emit = defineEmits(['loaded-document'])

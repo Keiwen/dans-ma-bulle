@@ -94,7 +94,7 @@ onMounted(async () => {
               :document-id="activeDocumentId"
               v-slot="{ isLoaded }"
             >
-              <pdf-reader-manager :document-id="activeDocumentId" :is-loaded="isLoaded" @loaded-document="onLoadedDocument"></pdf-reader-manager>
+              <pdf-reader-manager :is-loaded="isLoaded" @loaded-document="onLoadedDocument"></pdf-reader-manager>
               <div v-if="isLoaded" style="display: flex; height: 100%; flex-direction: column">
                 <Viewport
                   :document-id="activeDocumentId"
