@@ -25,6 +25,7 @@ const { engine, isLoading } = usePdfiumEngine()
 const plugins = ref([])
 
 const bookSrc = ref(null)
+const embedPdfKey = ref(0)
 
 const loadFile = async () => {
   const bookHandle = useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
@@ -47,7 +48,6 @@ const loadFile = async () => {
 }
 
 const initPdfReader = () => {
-  console.log('re-init pdf')
   // EMBED PDF Register the plugins you need
   plugins.value = [
     createPluginRegistration(DocumentManagerPluginPackage, {
@@ -60,6 +60,7 @@ const initPdfReader = () => {
       defaultZoomLevel: ZoomMode.FitPage
     })
   ]
+  embedPdfKey.value++
 }
 
 const onLoadedDocument = (docState) => {
@@ -87,7 +88,7 @@ onMounted(async () => {
 
         <!-- 3. Wrap your UI with the <EmbedPDF> provider -->
         <div v-else style="height: 500px">
-          <EmbedPDF :engine="engine" :plugins="plugins" v-slot="{ activeDocumentId }">
+          <EmbedPDF :engine="engine" :plugins="plugins" v-slot="{ activeDocumentId }" :key="embedPdfKey">
             <DocumentContent
               v-if="activeDocumentId"
               :document-id="activeDocumentId"
