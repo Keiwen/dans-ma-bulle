@@ -6,7 +6,7 @@ Comic reader dedicated to local books.
 
 Here come Dans ma bulle! (french for "within my bubble")
 
-![Dans ma bulle logo](https://raw.githubusercontent.com/Keiwen/dans-ma-bulle/master/src/assets/img/serene_light_logo_100.png)
+![Dans ma bulle logo](https://raw.githubusercontent.com/Keiwen/dans-ma-bulle/master/src/assets/img/serene_light_logo_80.png)
 
 This application will ask you to choose a directory on your device
 that will be read (**no write action**).
@@ -44,19 +44,34 @@ You can then choose a series, a book volume, and read it!
 
 ## Library architecture
 It will be required to follow a specific architecture in this directory:
-a folder per series, each containing a folder per volume,
-each containing a image file per page. For example:
-* Comic series A name
-  * Volume 1 name
+a folder per series, containing volumes.
+A volume could be either:
+* a folder containing an image file per page
+* an archive file containing an image file per page.
+It does not matter if images are included in a folder within
+this archive. Supported archive format: ZIP ou CBZ
+('Comic Book Zip', can simply be a zip renamed to cbz)
+* a PDF file as a scan of all pages of the book
+
+All kind of volumes may be mixed.
+For example, your directory may look like:
+* Comic series A name (directory)
+  * Volume 1 name (directory)
     * Page 1 image
     * Page 2 image
     * ...
-  * Volume 2 name
+  * Volume 2 archive
+  * Volume 3 name (directory)
+    * Page 1 image
+    * Page 2 image
+  * Volume 4 PDF
   * ...
-* Comic series B name
+* Comic series B name (directory)
 * ...
 
-Currently, the application supports these file extensions: jpg/jpeg.
+This application does NOT support RAR/CBR or EPUB files.
+We recommend decompressing these archives and re-compressing
+as ZIP/CBZ files instead.
 
 ## Mobile troubleshooting
 ### Library permission reset
