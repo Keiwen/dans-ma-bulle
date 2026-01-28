@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useLibraryLoader } from '@/composables/libraryLoader'
@@ -12,7 +12,7 @@ import { createPluginRegistration } from '@embedpdf/core'
 
 // EMBED PDF Import the essential plugins
 import { ViewportPluginPackage, Viewport } from '@embedpdf/plugin-viewport/vue'
-import { ScrollPluginPackage, Scroller } from '@embedpdf/plugin-scroll/vue'
+import { ScrollPluginPackage } from '@embedpdf/plugin-scroll/vue'
 import { DocumentContent, DocumentManagerPluginPackage } from '@embedpdf/plugin-document-manager/vue'
 import { RenderLayer, RenderPluginPackage } from '@embedpdf/plugin-render/vue'
 import { ZoomPluginPackage, ZoomMode } from '@embedpdf/plugin-zoom/vue'
@@ -26,6 +26,7 @@ const plugins = ref([])
 
 const bookSrc = ref(null)
 const embedPdfKey = ref(0)
+const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const loadFile = async () => {
   const bookHandle = useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
@@ -54,7 +55,9 @@ const initPdfReader = () => {
       initialDocuments: [{ url: bookSrc.value }]
     }),
     createPluginRegistration(ViewportPluginPackage),
-    createPluginRegistration(ScrollPluginPackage),
+    createPluginRegistration(ScrollPluginPackage, {
+      enabled: false
+    }),
     createPluginRegistration(RenderPluginPackage),
     createPluginRegistration(ZoomPluginPackage, {
       defaultZoomLevel: ZoomMode.FitPage
@@ -80,37 +83,31 @@ onMounted(async () => {
 
 <template>
   <div>
-    <div class="page-reader">
+    <div class="page-reader" style="height: 100%">
       <div>
         <div v-if="isLoading || !engine" class="loading-pane">
           Loading PDF Engine...
         </div>
 
         <!-- 3. Wrap your UI with the <EmbedPDF> provider -->
-        <div v-else style="height: 500px">
+        <div v-else class="pdf-container">
           <EmbedPDF :engine="engine" :plugins="plugins" v-slot="{ activeDocumentId }" :key="embedPdfKey">
             <DocumentContent
               v-if="activeDocumentId"
               :document-id="activeDocumentId"
               v-slot="{ isLoaded }"
             >
-              <pdf-reader-manager :document-id="activeDocumentId" :is-loaded="isLoaded" @loaded-document="onLoadedDocument"></pdf-reader-manager>
+              <pdf-reader-manager :is-loaded="isLoaded" @loaded-document="onLoadedDocument"></pdf-reader-manager>
               <div v-if="isLoaded" style="display: flex; height: 100%; flex-direction: column">
                 <Viewport
                   :document-id="activeDocumentId"
-                  style="background-color: #f1f3f5; width: 95%"
+                  style="background-color: transparent"
                 >
-                  <Scroller :document-id="activeDocumentId">
-                    <template #default="{ page }">
-                      <div :style="{ width: page.width + 'px', height: page.height + 'px' }">
-                        <!-- The RenderLayer is responsible for drawing the page -->
-                        <RenderLayer
-                          :document-id="activeDocumentId"
-                          :page-index="page.pageIndex"
-                        />
-                      </div>
-                    </template>
-                  </Scroller>
+                  <RenderLayer
+                    :key="pageIndex"
+                    :document-id="activeDocumentId"
+                    :page-index="pageIndex"
+                  />
                 </Viewport>
               </div>
             </DocumentContent>
@@ -129,5 +126,22 @@ onMounted(async () => {
   height: 100%;
   z-index: 20;
   position: relative;
+}
+
+.pdf-container {
+  height: 72vh;
+  width: 51vh;
+  overflow: hidden !important;
+}
+@media (min-width: 700px) {
+  /* Desktop */
+  .pdf-container {
+    height: 137vw;
+    width: 97vw;
+  }
+}
+
+.pdf-viewport {
+  overflow: hidden !important;
 }
 </style>
