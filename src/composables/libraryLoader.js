@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { PAGE_EXTENSIONS_SUPPORTED, BOOK_TYPE_IMAGE_FOLDER, BOOK_EXTENSIONS_SUPPORTED, BOOK_TYPE_PDF } from '@/constants'
+import { PAGE_EXTENSIONS_SUPPORTED, BOOK_TYPE_IMAGE_FOLDER, BOOK_EXTENSIONS_SUPPORTED, BOOK_TYPE_PDF, BOOK_TYPE_ZIP } from '@/constants'
 import { useStore } from 'vuex'
 import { useFlashMessages } from '@/composables/flashMessages'
 import { useStorageInstance } from '@/composables/storageInstance'
@@ -62,6 +62,9 @@ export function useLibraryLoader (store) {
           if (BOOK_EXTENSIONS_SUPPORTED.includes(extension)) {
             switch (extension) {
               case '.pdf': entry.__bookType = BOOK_TYPE_PDF; break
+              case '.zip':
+              case '.cbz':
+                entry.__bookType = BOOK_TYPE_ZIP; break
               default:
                 entry.__bookType = 'file'
             }
