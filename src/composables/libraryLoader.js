@@ -6,6 +6,13 @@ import { useStorageInstance } from '@/composables/storageInstance'
 
 let instance = null
 
+// NOTE ABOUT HANDLE ISSUE
+// Around 2026-01-28, there was update in chrome mobile browser to reinforce security
+// since then, handles should be retrieved almost every time we need it.
+// The way we used to store it is not working anymore as handle object is invalidated
+// therefore, we are working with names and retrieve handler again and again.
+// Current code is a mix between the old way and the new, to fix our issue without reworking everything
+
 export function useLibraryLoader (store) {
   if (instance) return instance // always return instance if exist
 
@@ -35,13 +42,14 @@ export function useLibraryLoader (store) {
     if (!libraryHandle.value) return list
 
     try {
-      for await (const [, entry] of libraryHandle.value.entries()) {
+      for await (const [name, entry] of libraryHandle.value.entries()) {
         if (entry.kind === 'directory') {
-          list.push(entry)
+          // HANDLE ISSUE: store name only here. If you store handle, later this handle will be invalidated
+          list.push(name)
         }
       }
     } catch (e) {
-      addErrorMessage('An error occurred on comic series listing')
+      addErrorMessage('An error occurred on comic series listing', '', true)
       console.error(e)
     }
     return list
@@ -52,32 +60,41 @@ export function useLibraryLoader (store) {
     if (!seriesHandle) return list
 
     try {
-      for await (const [, entry] of seriesHandle.entries()) {
+      for await (const [entryName, entry] of seriesHandle.entries()) {
         if (entry.kind === 'directory') {
-          entry.__bookType = BOOK_TYPE_IMAGE_FOLDER
-          list.push(entry)
+          // HANDLE ISSUE: store a brand new object here. If you store handle, later this handle will be invalidated
+          const bookEntry = {
+            name: entryName,
+            type: BOOK_TYPE_IMAGE_FOLDER
+          }
+          list.push(bookEntry)
         } else {
           // get file extension
-          const extension = entry.name.slice(entry.name.lastIndexOf('.'))
+          const extension = entryName.slice(entryName.lastIndexOf('.'))
           if (BOOK_EXTENSIONS_SUPPORTED.includes(extension)) {
+            // HANDLE ISSUE: store a brand new object here. If you store handle, later this handle will be invalidated
+            const bookEntry = {
+              name: entryName,
+              type: 'file'
+            }
             switch (extension) {
-              case '.pdf': entry.__bookType = BOOK_TYPE_PDF; break
+              case '.pdf': bookEntry.type = BOOK_TYPE_PDF; break
               case '.zip':
               case '.cbz':
-                entry.__bookType = BOOK_TYPE_ZIP; break
+                bookEntry.type = BOOK_TYPE_ZIP; break
               default:
-                entry.__bookType = 'file'
+                bookEntry.type = 'file'
             }
-            list.push(entry)
+            list.push(bookEntry)
           } else {
-            console.log('File extension not supported for book: ' + seriesHandle.name + '/' + entry.name, extension)
+            console.log('File extension not supported for book: ' + seriesHandle.name + '/' + entryName, extension)
           }
         }
       }
       // force alphabetical order
       list.sort((a, b) => a.name.localeCompare(b.name, ['fr', 'en'], { sensitivity: 'base' }))
     } catch (e) {
-      addErrorMessage('An error occurred on books listing for comic series ' + seriesHandle.name)
+      addErrorMessage('An error occurred on books listing for comic series ' + seriesHandle.name, '', true)
       console.error(e)
     }
     return list
@@ -89,21 +106,21 @@ export function useLibraryLoader (store) {
     if (bookHandle.__bookType !== BOOK_TYPE_IMAGE_FOLDER) return list
 
     try {
-      for await (const [name, entry] of bookHandle.entries()) {
+      for await (const [entryName, entry] of bookHandle.entries()) {
         if (entry.kind === 'file') {
           // get file extension
-          const extension = name.slice(name.lastIndexOf('.'))
+          const extension = entryName.slice(entryName.lastIndexOf('.'))
           if (PAGE_EXTENSIONS_SUPPORTED.includes(extension)) {
-            list.push(entry)
+            list.push(entryName)
           } else {
-            console.log('File extension not supported for page: ' + bookHandle.name + '/' + name)
+            console.log('File extension not supported for page: ' + bookHandle.name + '/' + entryName)
           }
         }
       }
       // force alphabetical order
-      list.sort((a, b) => a.name.localeCompare(b.name, ['fr', 'en'], { sensitivity: 'base' }))
+      list.sort((a, b) => a.localeCompare(b, ['fr', 'en'], { sensitivity: 'base' }))
     } catch (e) {
-      addErrorMessage('An error occurred on pages listing for book ' + bookHandle.name)
+      addErrorMessage('An error occurred on pages listing for book ' + bookHandle.name, '', true)
       console.error(e)
     }
     return list
@@ -114,15 +131,17 @@ export function useLibraryLoader (store) {
     loadedBooksCount.value = 0
     libraryHandle.value = mainHandle
     shelf.value = {}
-    const allSeries = await listSeries()
-    for (const seriesHandle of allSeries) {
+    const allSeriesNames = await listSeries()
+    for (const seriesName of allSeriesNames) {
+      // HANDLE ISSUE: we did NOT store the full handle for security reason. Check handle again
+      const seriesHandle = await libraryHandle.value.getDirectoryHandle(seriesName)
       const comicSeriesBooks = {}
       const books = await listBooksFromSeries(seriesHandle)
-      for (const bookHandle of books) {
-        comicSeriesBooks[bookHandle.name] = bookHandle
+      for (const bookEntry of books) {
+        comicSeriesBooks[bookEntry.name] = bookEntry
         loadedBooksCount.value++
       }
-      if (books.length) shelf.value[seriesHandle.name] = comicSeriesBooks
+      if (books.length) shelf.value[seriesName] = comicSeriesBooks
     }
     await store.dispatch('selectLibrary', mainHandle.name)
     await useStorageInstance().setLibraryHandle(mainHandle)
@@ -138,16 +157,37 @@ export function useLibraryLoader (store) {
     return Object.keys(shelf.value[comicSeries])
   }
 
-  const getBookHandle = (comicSeries, book) => {
+  const getBookHandle = async (comicSeries, book) => {
     if (!shelf.value[comicSeries]) return null
     if (!shelf.value[comicSeries][book]) return null
-    return shelf.value[comicSeries][book]
+    const bookInfo = shelf.value[comicSeries][book]
+    const seriesHandle = await libraryHandle.value.getDirectoryHandle(comicSeries)
+    let bookHandle = {}
+    // HANDLE ISSUE: check handle again, but could be directory or file
+    if (bookInfo.type === BOOK_TYPE_IMAGE_FOLDER) {
+      bookHandle = await seriesHandle.getDirectoryHandle(book)
+    } else {
+      bookHandle = await seriesHandle.getFileHandle(book)
+    }
+    // HANDLE ISSUE: adjust attribute again to not break usage after
+    bookHandle.__bookType = bookInfo.type
+    return bookHandle
   }
 
   const getPagesFromBookDirectory = async (comicSeries, book) => {
     if (!shelf.value[comicSeries]) return []
     if (!shelf.value[comicSeries][book]) return []
-    return await listPagesFromBookDirectory(shelf.value[comicSeries][book])
+    // HANDLE ISSUE: check handle again
+    const bookHandle = await getBookHandle(comicSeries, book)
+    return await listPagesFromBookDirectory(bookHandle)
+  }
+
+  const getPageHandle = async (comicSeries, book, pageName) => {
+    if (!shelf.value[comicSeries]) return null
+    if (!shelf.value[comicSeries][book]) return null
+    // HANDLE ISSUE: check handle again
+    const bookHandle = await getBookHandle(comicSeries, book)
+    return await bookHandle.getFileHandle(pageName)
   }
 
   instance = {
@@ -160,6 +200,7 @@ export function useLibraryLoader (store) {
     getBooksFromSeries,
     getPagesFromBookDirectory,
     getBookHandle,
+    getPageHandle,
     isLoading
   }
 

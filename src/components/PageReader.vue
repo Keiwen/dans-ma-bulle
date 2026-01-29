@@ -15,7 +15,7 @@ const pageSrc = ref(null)
 const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const loadPage = async () => {
-  const pageHandle = getCurrentPage()
+  const pageHandle = await getCurrentPage()
   if (!pageHandle) {
     addErrorMessage('No page found')
     return

@@ -13,28 +13,28 @@ export function usePageManager (store) {
   const { addWarningMessage } = useFlashMessages()
   let loadedSeries = ''
   let loadedBook = ''
-  let loadedPages = []
+  let loadedPagesNames = []
   const pageCount = ref(0)
 
   const loadPages = async () => {
-    loadedPages = []
+    loadedPagesNames = []
     loadedSeries = store.getters.comicSeries
     loadedBook = store.getters.book
-    loadedPages = await libraryLoader.getPagesFromBookDirectory(loadedSeries, loadedBook)
-    pageCount.value = loadedPages.length
+    loadedPagesNames = await libraryLoader.getPagesFromBookDirectory(loadedSeries, loadedBook)
+    pageCount.value = loadedPagesNames.length
   }
 
-  const getPage = (index) => {
-    if (!loadedPages[index]) return null
-    return loadedPages[index]
+  const getPage = async (index) => {
+    if (!loadedPagesNames[index]) return null
+    return await libraryLoader.getPageHandle(loadedSeries, loadedBook, loadedPagesNames[index])
   }
 
-  const getCurrentPage = () => {
-    return getPage(store.getters.getCurrentPageIndex())
+  const getCurrentPage = async () => {
+    return await getPage(store.getters.getCurrentPageIndex())
   }
 
   const loadFullBook = async (knownPageCount) => {
-    loadedPages = []
+    loadedPagesNames = []
     loadedSeries = store.getters.comicSeries
     loadedBook = store.getters.book
     pageCount.value = knownPageCount

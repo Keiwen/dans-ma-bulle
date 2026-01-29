@@ -29,7 +29,7 @@ const embedPdfKey = ref(0)
 const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const loadFile = async () => {
-  const bookHandle = useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
+  const bookHandle = await useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
   if (!bookHandle) {
     addErrorMessage('No book found')
     return

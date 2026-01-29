@@ -15,7 +15,7 @@ const { addErrorMessage } = useFlashMessages()
 const readerType = ref('')
 
 const loadBook = async () => {
-  const bookHandle = getBookHandle(store.getters.comicSeries, store.getters.book)
+  const bookHandle = await getBookHandle(store.getters.comicSeries, store.getters.book)
   if (!bookHandle) {
     readerType.value = ''
     addErrorMessage('No book found')

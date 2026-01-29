@@ -15,7 +15,7 @@ const pageSrc = ref(null)
 const pageIndex = computed(() => store.getters.getCurrentPageIndex())
 
 const loadFile = async () => {
-  const bookHandle = useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
+  const bookHandle = await useLibraryLoader().getBookHandle(store.getters.comicSeries, store.getters.book)
   await loadArchiveFile(bookHandle)
   await loadFullBook(pageCount.value)
 }
